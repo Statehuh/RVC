@@ -77,21 +77,19 @@ def download_model(url=None, model=None):
 
     if not os.path.exists(download_dir): os.makedirs(download_dir, exist_ok=True)
     if not os.path.exists(model_folders): os.makedirs(model_folders, exist_ok=True)
+
+    model_folders = os.path.join(model_folders, model)
+    os.makedirs(model_folders, exist_ok=True)
     
     try:
         print("[INFO] Start downloading...")
 
-        if url.endswith(".pth"): HF_download_file(url, os.path.join(model_folders, model, f"{model}.pth"))
-        elif url.endswith(".index"):
-            model_log_dir = os.path.join(model_folders, model)
-            os.makedirs(model_log_dir, exist_ok=True)
-
-            HF_download_file(url, os.path.join(model_log_dir, f"{model}.index"))
+        if url.endswith(".pth"): HF_download_file(url, os.path.join(model_folders, f"{model}.pth"))
+        elif url.endswith(".index"): HF_download_file(url, os.path.join(model_folders, f"{model}.index"))
         elif url.endswith(".zip"):
             output_path = HF_download_file(url, os.path.join(download_dir, model + ".zip"))
             shutil.unpack_archive(output_path, download_dir)
 
-            model_folders = os.path.join(model_folders, model)
             move_files_from_directory(download_dir, model_folders, model)
         else:
             if "drive.google.com" in url or "drive.usercontent.google.com" in url:
@@ -105,7 +103,6 @@ def download_model(url=None, model=None):
                     file = gdown.gdown_download(id=file_id, output=download_dir)
                     if file.endswith(".zip"): shutil.unpack_archive(file, download_dir)
 
-                    model_folders = os.path.join(model_folders, model)
                     move_files_from_directory(download_dir, model_folders, model)
             elif "mega.nz" in url:
                 meganz.mega_download_url(url, download_dir)
@@ -113,19 +110,16 @@ def download_model(url=None, model=None):
                 file_download = next((f for f in os.listdir(download_dir)), None)
                 if file_download.endswith(".zip"): shutil.unpack_archive(os.path.join(download_dir, file_download), download_dir)
 
-                model_folders = os.path.join(model_folders, model)
                 move_files_from_directory(download_dir, model_folders, model)
             elif "mediafire.com" in url:
                 file = mediafire.Mediafire_Download(url, download_dir)
                 if file.endswith(".zip"): shutil.unpack_archive(file, download_dir)
 
-                model_folders = os.path.join(model_folders, model)
                 move_files_from_directory(download_dir, model_folders, model)
             elif "pixeldrain.com" in url:
                 file = pixeldrain.pixeldrain(url, download_dir)
                 if file.endswith(".zip"): shutil.unpack_archive(file, download_dir)
 
-                model_folders = os.path.join(model_folders, model)
                 move_files_from_directory(download_dir, model_folders, model)
             else:
                 print("[WARNING] The url path is not supported.")
