@@ -270,7 +270,7 @@ class VoiceConverter:
             self.use_f0 = self.cpt.get("f0", 1)
             self.version = self.cpt.get("version", "v1")
             self.vocoder = self.cpt.get("vocoder", "Default")
-            self.energy = self.cpt.get("rms_extract", False)
+            self.energy = self.cpt.get("energy", False)
 
             if self.vocoder != "Default": self.config.is_half = False
             self.net_g = Synthesizer(*self.cpt["config"], use_f0=self.use_f0, text_enc_hidden_dim=768 if self.version == "v2" else 256, vocoder=self.vocoder, energy=self.energy)
